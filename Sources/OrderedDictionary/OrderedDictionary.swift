@@ -232,6 +232,12 @@ extension OrderedDictionary: MutableCollection {
    }
 
    public func index(after i: Int) -> Int { orderedKeys.index(after: i) }
+
+   public func map<T>(_ transform: (inout KeyValuePair) -> Void) -> OrderedDictionary<Key, Value> {
+      var copy = self
+      copy.forEach { transform(&$0) }
+      return copy
+   }
 }
 
 extension OrderedDictionary: RandomAccessCollection {}
