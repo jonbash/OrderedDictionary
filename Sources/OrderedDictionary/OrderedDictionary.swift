@@ -233,9 +233,19 @@ extension OrderedDictionary: MutableCollection {
 
    public func index(after i: Int) -> Int { orderedKeys.index(after: i) }
 
-   public func map<T>(_ transform: (inout KeyValuePair) -> Void) -> OrderedDictionary<Key, Value> {
+   public mutating func transform(_ change: (inout KeyValuePair) -> Void) {
+      for (key, value) in self.keyValuePairs {
+         var copy = (key: key, value: value)
+         change(&copy)
+         self[copy.key] = copy.value
+      }
+   }
+
+   public func transformed(
+      _ change: (inout KeyValuePair) -> Void
+   ) -> OrderedDictionary<Key, Value> {
       var copy = self
-      copy.forEach { transform(&$0) }
+      copy.transform(change)
       return copy
    }
 }
